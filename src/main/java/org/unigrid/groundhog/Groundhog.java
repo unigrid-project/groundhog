@@ -16,10 +16,6 @@
 
 package org.unigrid.groundhog;
 
-/**
- *
- * @author marcus
- */
 public class Groundhog {
 
     public static void main(String[] args) {
