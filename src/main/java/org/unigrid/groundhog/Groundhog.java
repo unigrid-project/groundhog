@@ -14,7 +14,7 @@
 	If not, see <http://www.gnu.org/licenses/> and <https://github.com/unigrid-project/janus-java>.
 */
 
-package org.unigrid.gorundhog;
+package org.unigrid.groundhog;
 
 /**
  *
