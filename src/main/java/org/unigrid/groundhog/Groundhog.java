@@ -1,5 +1,5 @@
 /*
-	The Janus Wallet
+	Groundhog
 	Copyright © 2021-2022 The Unigrid Foundation, UGD Software AB
 
 	This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -12,13 +12,24 @@
 
 	You should have received an addended copy of the GNU Affero General Public License with this program.
 	If not, see <http://www.gnu.org/licenses/> and <https://github.com/unigrid-project/janus-java>.
-*/
+ */
 
 package org.unigrid.groundhog;
 
+import org.unigrid.groundhog.command.CLI;
+import picocli.CommandLine.Command;
+import picocli.CommandLine;
+
+@Command(name = "groundhog", mixinStandardHelpOptions = true, version = "Unigrid Groundhog 0.0.1-SNAPSHOT",
+	scope = CommandLine.ScopeType.INHERIT, header = {
+		"",
+		"  Unigrid Groundhog 0.0.1-SNAPSHOT",
+		""
+	}, subcommands = { CLI.class }
+)
 public class Groundhog {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        System.exit(new CommandLine(Groundhog.class).execute(args));
     }
 }
