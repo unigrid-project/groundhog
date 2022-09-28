@@ -14,11 +14,6 @@
 	If not, see <http://www.gnu.org/licenses/> and <https://github.com/unigrid-project/janus-java>.
 */
 
-package org.unigrid.groundhog;
-
-public class Groundhog {
-
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
-    }
+module UnigridGroundhog {
+	requires info.picocli;
 }
