@@ -23,7 +23,7 @@
                         <plugin>
                                 <groupId>org.apache.maven.plugins</groupId>
                                 <artifactId>maven-jar-plugin</artifactId>
-                                <version>3.3.0</version>
+                                
                                 <configuration>
                                         <archive>
                                                 <manifest>
@@ -36,20 +36,7 @@
                         <plugin>
                                 <groupId>org.apache.maven.plugins</groupId>
                                 <artifactId>maven-compiler-plugin</artifactId>
-                                <!-- annotationProcessorPaths requires maven-compiler-plugin version 3.5 or higher -->
                                 <version>3.6.1</version>
-                                <configuration>
-                                        <annotationProcessorPaths>
-                                                <path>
-                                                        <groupId>info.picocli</groupId>
-                                                        <artifactId>picocli-codegen</artifactId>
-                                                        <version>4.6.3</version>
-                                                </path>
-                                        </annotationProcessorPaths>
-                                        <compilerArgs>
-                                                <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
-                                        </compilerArgs>
-                                </configuration>
                         </plugin>
                 </plugins>
         </build>

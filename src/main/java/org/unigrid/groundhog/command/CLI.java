@@ -14,22 +14,13 @@
 	If not, see <http://www.gnu.org/licenses/> and <https://github.com/unigrid-project/janus-java>.
  */
 
-package org.unigrid.groundhog;
+package org.unigrid.groundhog.command;
 
-import org.unigrid.groundhog.command.CLI;
+import org.unigrid.groundhog.command.cli.HelloWorld;
 import picocli.CommandLine.Command;
-import picocli.CommandLine;
 
-@Command(name = "groundhog", mixinStandardHelpOptions = true, version = "Unigrid Groundhog 0.0.1-SNAPSHOT",
-	scope = CommandLine.ScopeType.INHERIT, header = {
-		"",
-		"  Unigrid Groundhog 0.0.1-SNAPSHOT",
-		""
-	}, subcommands = { CLI.class }
-)
-public class Groundhog {
+@Command(name = "cli", subcommands = { HelloWorld.class
+})
+public class CLI {
 
-    public static void main(String[] args) {
-        System.exit(new CommandLine(Groundhog.class).execute(args));
-    }
 }
