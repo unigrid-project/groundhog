@@ -20,7 +20,7 @@ package org.unigrid.gorundhog;
  *
  * @author marcus
  */
-public class Gorundhog {
+public class Groundhog {
 
     public static void main(String[] args) {
         System.out.println("Hello World!");
