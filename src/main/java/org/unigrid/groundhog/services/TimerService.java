@@ -1,5 +1,5 @@
 /*
-	Groundhog
+	The Janus Wallet
 	Copyright © 2021-2022 The Unigrid Foundation, UGD Software AB
 
 	This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -14,23 +14,19 @@
 	If not, see <http://www.gnu.org/licenses/> and <https://github.com/unigrid-project/janus-java>.
  */
 
-package org.unigrid.groundhog;
+package org.unigrid.groundhog.services;
 
-import org.unigrid.groundhog.command.Start;
-import org.unigrid.groundhog.command.CLI;
-import picocli.CommandLine.Command;
-import picocli.CommandLine;
+import java.util.Timer;
+import org.unigrid.groundhog.legacyDaemon.DaemonMonitor;
 
-@Command(name = "groundhog", mixinStandardHelpOptions = true, version = "Unigrid Groundhog 0.0.1-SNAPSHOT",
-	scope = CommandLine.ScopeType.INHERIT, header = {
-		"",
-		"  Unigrid Groundhog 0.0.1-SNAPSHOT",
-		""
-	}, subcommands = {CLI.class, Start.class}
-)
-public class Groundhog {
-
-	public static void main(String[] args) {
-		System.exit(new CommandLine(Groundhog.class).execute(args));
+public class TimerService {
+	private Timer legecyDaemonTimer;
+	
+	public TimerService() {
+		legecyDaemonTimer = new Timer(false);
+	}
+	
+	public void pollLegecyDaemon() {
+		legecyDaemonTimer.scheduleAtFixedRate(new DaemonMonitor(), 0, 10000);
 	}
 }
