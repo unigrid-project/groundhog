@@ -16,6 +16,7 @@
 
 package org.unigrid.groundhog;
 
+import org.unigrid.groundhog.command.Start;
 import org.unigrid.groundhog.command.CLI;
 import picocli.CommandLine.Command;
 import picocli.CommandLine;
@@ -25,11 +26,11 @@ import picocli.CommandLine;
 		"",
 		"  Unigrid Groundhog 0.0.1-SNAPSHOT",
 		""
-	}, subcommands = { CLI.class }
+	}, subcommands = {CLI.class, Start.class}
 )
 public class Groundhog {
 
-    public static void main(String[] args) {
-        System.exit(new CommandLine(Groundhog.class).execute(args));
-    }
+	public static void main(String[] args) {
+		System.exit(new CommandLine(Groundhog.class).execute(args));
+	}
 }
