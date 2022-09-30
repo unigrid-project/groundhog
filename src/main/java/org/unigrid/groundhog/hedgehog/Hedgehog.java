@@ -20,8 +20,8 @@ import java.io.IOException;
 
 public class Hedgehog {
 	private String testHedgehogStart = "";
-	private String hedgehogStart = "";
-	private String arg = "";
+	private String hedgehogStart = "java -jar /home/unigrid/.local/bin/hedgehog.jar";
+	private String arg = "daemon";
 	private String testHedgehogStop = "";
 	private String hedgehogStop = "";
 	

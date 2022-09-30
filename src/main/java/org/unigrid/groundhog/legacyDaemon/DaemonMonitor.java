@@ -34,7 +34,7 @@ public class DaemonMonitor extends TimerTask {
 				.redirectInput(ProcessBuilder.Redirect.INHERIT)
 				.redirectError(ProcessBuilder.Redirect.INHERIT)
 				.redirectOutput(ProcessBuilder.Redirect.INHERIT)
-				.command(liveExec, arg).start();
+				.command(testExec, arg).start();
 			InputStream out = p.getInputStream();
 			byte[] arr = out.readAllBytes();
 			message = new String(arr, StandardCharsets.UTF_8);
