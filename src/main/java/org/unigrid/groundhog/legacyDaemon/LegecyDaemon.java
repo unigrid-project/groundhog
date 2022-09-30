@@ -20,9 +20,10 @@ import java.io.IOException;
 public class LegecyDaemon {
 
 	private String testingStartCommand = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigridd";
-	private String startCommand = "unigridd -daemon -server";
+	private String startCommand = "/home/unigrid/.local/bin/unigridd";
+	private String[] startArgs = {"-daemon", "-server"};
 	private String testCli = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigrid-cli";
-	private String cli = "unigrid-cli";
+	private String cli = "/home/unigrid/.local/bin/unigrid-cli";
 	private String stop = "stop";
 
 	public void stopDaemon() {
@@ -35,8 +36,8 @@ public class LegecyDaemon {
 
 	public void startDaemon() {
 		try {
-			System.out.println(testingStartCommand);
-			Runtime.getRuntime().exec(testingStartCommand);
+			System.out.println(startCommand);
+			Process p = new ProcessBuilder().command(startCommand, startArgs[0], startArgs[1]).start();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
