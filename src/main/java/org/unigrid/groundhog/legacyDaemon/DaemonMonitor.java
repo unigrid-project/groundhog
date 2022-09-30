@@ -24,7 +24,7 @@ public class DaemonMonitor extends TimerTask {
 
 	private String testExec = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigrid-cli";
 	private String arg = "getblockcount";
-	private String liveExec = "unigrid-cli getblockcount";
+	private String liveExec = "/home/unigrid/.local/bin/unigrid-cli";
 	
 	@Override
 	public void run() {
@@ -34,7 +34,7 @@ public class DaemonMonitor extends TimerTask {
 				.redirectInput(ProcessBuilder.Redirect.INHERIT)
 				.redirectError(ProcessBuilder.Redirect.INHERIT)
 				.redirectOutput(ProcessBuilder.Redirect.INHERIT)
-				.command(testExec, arg).start();
+				.command(liveExec, arg).start();
 			InputStream out = p.getInputStream();
 			byte[] arr = out.readAllBytes();
 			message = new String(arr, StandardCharsets.UTF_8);
