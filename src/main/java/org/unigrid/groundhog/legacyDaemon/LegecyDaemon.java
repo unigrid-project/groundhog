@@ -19,12 +19,23 @@ import java.io.IOException;
 
 public class LegecyDaemon {
 
+	private int port = 0;
+
 	private String testingStartCommand = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigridd";
 	private String startCommand = "/home/unigrid/.local/bin/unigridd";
-	private String[] startArgs = {"-daemon", "-server"};
+	private String[] startArgs = {"-daemon", "-server", "port="};
 	private String testCli = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigrid-cli";
 	private String cli = "/home/unigrid/.local/bin/unigrid-cli";
 	private String stop = "stop";
+
+	public LegecyDaemon() {
+		/* Empty on purpuse */
+	}
+	
+	public LegecyDaemon(int port) {
+		this.port = port;
+		System.out.println(port);
+	}
 
 	public void stopDaemon() {
 		try {
@@ -36,8 +47,14 @@ public class LegecyDaemon {
 
 	public void startDaemon() {
 		try {
-			System.out.println(startCommand);
-			Process p = new ProcessBuilder().command(startCommand, startArgs[0], startArgs[1]).start();
+			ProcessBuilder pb = new ProcessBuilder();
+			if(port > 0) {
+				pb.command(testingStartCommand, startArgs[0], startArgs[1], startArgs[2] + port);
+			} else {
+				pb.command(testingStartCommand, startArgs[0], startArgs[1]);
+			}
+			System.out.println(testingStartCommand);
+			Process p = pb.start();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

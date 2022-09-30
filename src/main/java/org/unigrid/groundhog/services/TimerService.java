@@ -27,6 +27,6 @@ public class TimerService {
 	}
 	
 	public void pollLegecyDaemon() {
-		legecyDaemonTimer.scheduleAtFixedRate(new DaemonMonitor(), 0, 10000);
+		legecyDaemonTimer.scheduleAtFixedRate(new DaemonMonitor(), 2000, 120000);
 	}
 }

@@ -20,13 +20,28 @@ import org.unigrid.groundhog.hedgehog.Hedgehog;
 import org.unigrid.groundhog.legacyDaemon.LegecyDaemon;
 import org.unigrid.groundhog.services.TimerService;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 @Command(name="start")
-public class Start implements Runnable{ 
+public class Start implements Runnable{
+	private final static String DEFAULT_VALUE = "0";
 	
+	@Option(names = {"-hedgehogport", "--hp"}, description = "Port for hedgehog", defaultValue = DEFAULT_VALUE)
+	private int hedgehogPort;
+	
+	@Option(names = {"-daemonport", "--dp"}, description = "Port for legecy daemon", defaultValue = DEFAULT_VALUE)
+	private int legecyDaemonPort;
+
+	private LegecyDaemon daemon;
+
 	@Override
 	public void run() {
-		LegecyDaemon daemon = new LegecyDaemon();
+		if(legecyDaemonPort == 0) {
+			daemon = new LegecyDaemon();
+		} else {
+			daemon = new LegecyDaemon(legecyDaemonPort);
+		}
+		
 		daemon.startDaemon();
 
 		//Hedgehog hedgehog = new Hedgehog();
@@ -43,7 +58,11 @@ public class Start implements Runnable{
 		TimerService timer = new TimerService();
 		timer.pollLegecyDaemon();
 		while(true) {
-			
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 }
