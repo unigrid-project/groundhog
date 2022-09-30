@@ -16,6 +16,7 @@
 
 package org.unigrid.groundhog.command;
 
+import org.unigrid.groundhog.hedgehog.Hedgehog;
 import org.unigrid.groundhog.legacyDaemon.LegecyDaemon;
 import org.unigrid.groundhog.services.TimerService;
 import picocli.CommandLine.Command;
@@ -28,10 +29,14 @@ public class Start implements Runnable{
 		LegecyDaemon daemon = new LegecyDaemon();
 		daemon.startDaemon();
 
+		//Hedgehog hedgehog = new Hedgehog();
+		//hedgehog.startHedgehog();
+
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			@Override
 			public void run() {
 				daemon.stopDaemon();
+				//hedgehog.stopHedgehog();
 			}
 		}));
 
