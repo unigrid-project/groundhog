@@ -14,36 +14,30 @@
 	If not, see <http://www.gnu.org/licenses/> and <https://github.com/unigrid-project/janus-java>.
  */
 
-package org.unigrid.groundhog.command;
+package org.unigrid.groundhog.hedgehog;
 
-import org.unigrid.groundhog.hedgehog.Hedgehog;
-import org.unigrid.groundhog.legacyDaemon.LegecyDaemon;
-import org.unigrid.groundhog.services.TimerService;
-import picocli.CommandLine.Command;
+import java.io.IOException;
 
-@Command(name="start")
-public class Start implements Runnable{ 
+public class Hedgehog {
+	private String testHedgehogStart = "";
+	private String hedgehogStart = "";
+	private String arg = "";
+	private String testHedgehogStop = "";
+	private String hedgehogStop = "";
 	
-	@Override
-	public void run() {
-		LegecyDaemon daemon = new LegecyDaemon();
-		daemon.startDaemon();
-
-		//Hedgehog hedgehog = new Hedgehog();
-		//hedgehog.startHedgehog();
-
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-			@Override
-			public void run() {
-				daemon.stopDaemon();
-				//hedgehog.stopHedgehog();
-			}
-		}));
-
-		TimerService timer = new TimerService();
-		timer.pollLegecyDaemon();
-		while(true) {
-			
+	public void startHedgehog() {
+		try {
+			Process p = new ProcessBuilder().command(testHedgehogStart).start();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	public void stopHedgehog() {
+		try {
+			Process p = new ProcessBuilder().command(testHedgehogStop).start();
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 }
