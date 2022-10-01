@@ -17,6 +17,8 @@ package org.unigrid.groundhog.legacyDaemon;
 
 import java.io.IOException;
 
+import org.unigrid.groundhog.model.GroundhogModel;
+
 public class LegecyDaemon {
 
 	private int port = 0;
@@ -30,6 +32,7 @@ public class LegecyDaemon {
 
 	public LegecyDaemon() {
 		/* Empty on purpuse */
+		
 	}
 	
 	public LegecyDaemon(int port) {
@@ -39,21 +42,24 @@ public class LegecyDaemon {
 
 	public void stopDaemon() {
 		try {
-			Process p = new ProcessBuilder().command(testCli, stop).start();
+			Process p = new ProcessBuilder().command(cli, stop).start();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
 
 	public void startDaemon() {
+
+		Boolean isTesting = GroundhogModel.getInstance().getTesting();
+
 		try {
 			ProcessBuilder pb = new ProcessBuilder();
 			if(port > 0) {
-				pb.command(testingStartCommand, startArgs[0], startArgs[1], startArgs[2] + port);
+				pb.command(isTesting? testingStartCommand : startCommand, startArgs[0], startArgs[1], startArgs[2] + port);
 			} else {
-				pb.command(testingStartCommand, startArgs[0], startArgs[1]);
+				pb.command(isTesting? testingStartCommand : startCommand, startArgs[0], startArgs[1]);
 			}
-			System.out.println(testingStartCommand);
+			System.out.println(isTesting? testingStartCommand : startCommand);
 			Process p = pb.start();
 		} catch (IOException ex) {
 			ex.printStackTrace();

@@ -1,5 +1,5 @@
 /*
-	The Janus Wallet
+	Groundhog
 	Copyright © 2021-2022 The Unigrid Foundation, UGD Software AB
 
 	This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -14,21 +14,31 @@
 	If not, see <http://www.gnu.org/licenses/> and <https://github.com/unigrid-project/janus-java>.
  */
 
-package org.unigrid.groundhog.services;
+package org.unigrid.groundhog.model;
 
-import java.util.Timer;
-import org.unigrid.groundhog.legacyDaemon.DaemonMonitor;
+public class GroundhogModel {
 
-public class TimerService {
-	private Timer legecyDaemonTimer;
-	private int liveTime = 120000;
-	private int testTime = 5000;
+	private static GroundhogModel single_instance = null;
 
-	public TimerService() {
-		legecyDaemonTimer = new Timer(false);
+	private Boolean testing;
+
+	private GroundhogModel() {
+		// 
 	}
-	
-	public void pollLegecyDaemon() {
-		legecyDaemonTimer.scheduleAtFixedRate(new DaemonMonitor(), 2000, testTime);
+
+	public static GroundhogModel getInstance() {
+		if (single_instance == null) {
+			single_instance = new GroundhogModel();
+		}
+
+		return single_instance;
+	}
+
+	public Boolean getTesting() {
+		return this.testing;
+	}
+
+	public void setTesting(Boolean bool) {
+		this.testing = bool;
 	}
 }

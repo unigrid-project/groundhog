@@ -8,6 +8,6 @@ import picocli.CommandLine;
 public class HelloWorld implements Runnable {
     @Override
     public void run() {
-        System.out.println("fuck off you fucking fuck");
+        System.out.println("hi");
     }
 }
