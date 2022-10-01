@@ -19,26 +19,32 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.TimerTask;
+import org.unigrid.groundhog.model.GroundhogModel;
 
 public class DaemonMonitor extends TimerTask {
 
 	private String testExec = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigrid-cli";
 	private String arg = "getblockcount";
 	private String liveExec = "/home/unigrid/.local/bin/unigrid-cli";
-	
+
 	@Override
 	public void run() {
 		String message = "";
+		Boolean isTesting = GroundhogModel.getInstance().getTesting();
 		try {
 			Process p = new ProcessBuilder()
 				.redirectInput(ProcessBuilder.Redirect.INHERIT)
 				.redirectError(ProcessBuilder.Redirect.INHERIT)
 				.redirectOutput(ProcessBuilder.Redirect.INHERIT)
-				.command(testExec, arg).start();
+				.command(isTesting? testExec : liveExec, arg).start();
 			InputStream out = p.getInputStream();
 			byte[] arr = out.readAllBytes();
 			message = new String(arr, StandardCharsets.UTF_8);
-			System.out.println(message);
+			if(message.equals("-1")) {
+				System.out.println("syncing");
+			} else {
+				System.out.println("blocks: " + message);
+			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

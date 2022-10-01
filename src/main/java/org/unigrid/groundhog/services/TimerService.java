@@ -21,12 +21,14 @@ import org.unigrid.groundhog.legacyDaemon.DaemonMonitor;
 
 public class TimerService {
 	private Timer legecyDaemonTimer;
-	
+	private int liveTime = 120000;
+	private int testTime = 5000;
+
 	public TimerService() {
 		legecyDaemonTimer = new Timer(false);
 	}
 	
 	public void pollLegecyDaemon() {
-		legecyDaemonTimer.scheduleAtFixedRate(new DaemonMonitor(), 2000, 120000);
+		legecyDaemonTimer.scheduleAtFixedRate(new DaemonMonitor(), 2000, testTime);
 	}
 }
