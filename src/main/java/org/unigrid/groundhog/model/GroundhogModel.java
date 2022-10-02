@@ -21,6 +21,7 @@ public class GroundhogModel {
 	private static GroundhogModel single_instance = null;
 
 	private Boolean testing;
+	private String location;
 
 	private GroundhogModel() {
 		// 
@@ -40,5 +41,13 @@ public class GroundhogModel {
 
 	public void setTesting(Boolean bool) {
 		this.testing = bool;
+	}
+
+	public void setLocation(String loc) {
+		this.location = loc;
+	}
+
+	public String getLocation() {
+		return this.location;
 	}
 }

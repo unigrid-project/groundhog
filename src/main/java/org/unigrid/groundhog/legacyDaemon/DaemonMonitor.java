@@ -25,12 +25,13 @@ public class DaemonMonitor extends TimerTask {
 
 	private String testExec = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigrid-cli";
 	private String arg = "getblockcount";
-	private String liveExec = "/home/unigrid/.local/bin/unigrid-cli";
+	private String liveExec;
 
 	@Override
 	public void run() {
 		String message = "";
 		Boolean isTesting = GroundhogModel.getInstance().getTesting();
+		liveExec = GroundhogModel.getInstance().getLocation().concat("unigrid-cli");
 		try {
 			Process p = new ProcessBuilder()
 				.redirectInput(ProcessBuilder.Redirect.INHERIT)
