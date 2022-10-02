@@ -24,17 +24,18 @@ public class LegecyDaemon {
 	private int port = 0;
 
 	private String testingStartCommand = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigridd";
-	private String startCommand = "/home/unigrid/.local/bin/unigridd";
+	private String startCommand;
 	private String[] startArgs = {"-daemon", "-server", "port="};
 	private String testCli = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigrid-cli";
-	private String cli = "/home/unigrid/.local/bin/unigrid-cli";
+	private String cli;
 	private String stop = "stop";
 
 	public LegecyDaemon() {
 		/* Empty on purpuse */
-		
+		cli = GroundhogModel.getInstance().getLocation().concat("unigrid-cli");
+		startCommand = GroundhogModel.getInstance().getLocation().concat("unigridd");
 	}
-	
+
 	public LegecyDaemon(int port) {
 		this.port = port;
 		System.out.println(port);

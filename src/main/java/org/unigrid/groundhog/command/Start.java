@@ -38,6 +38,12 @@ public class Start implements Runnable {
 		GroundhogModel.getInstance().setTesting(bool);
 	}
 
+	@Option(names = {"-l", "--location"}, description = "Set the daemon location for custom users names.")
+	public void appLocation(String loc) {
+		System.out.println("location: " + loc);
+		GroundhogModel.getInstance().setLocation(loc);
+	}
+
 	private LegecyDaemon daemon;
 
 	@Override
