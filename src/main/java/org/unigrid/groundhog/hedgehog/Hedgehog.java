@@ -17,6 +17,7 @@
 package org.unigrid.groundhog.hedgehog;
 
 import java.io.IOException;
+import org.unigrid.groundhog.model.HedgehogModel;
 
 public class Hedgehog {
 	private String testHedgehogStart = "";
@@ -28,6 +29,7 @@ public class Hedgehog {
 	public void startHedgehog() {
 		try {
 			Process p = new ProcessBuilder().command(testHedgehogStart).start();
+			HedgehogModel.getInstance().setProcess(p);
 			p.isAlive();
 		} catch (IOException ex) {
 			ex.printStackTrace();

@@ -13,29 +13,29 @@
 	You should have received an addended copy of the GNU Affero General Public License with this program.
 	If not, see <http://www.gnu.org/licenses/> and <https://github.com/unigrid-project/janus-java>.
  */
+package org.unigrid.groundhog.model;
 
-package org.unigrid.groundhog.services;
+public class HedgehogModel {
 
-import java.util.Timer;
-import org.unigrid.groundhog.hedgehog.HedgehogMonitor;
-import org.unigrid.groundhog.legacyDaemon.DaemonMonitor;
+	private static HedgehogModel hedgehogModel = null;
+	private Process process = null;
 
-public class TimerService {
-	private Timer legecyDaemonTimer;
-	private Timer hedgehogTimer;
-	private int liveTime = 120000;
-	private int testTime = 5000;
-
-	public TimerService() {
-		legecyDaemonTimer = new Timer(false);
-		hedgehogTimer = new Timer(false);
+	private HedgehogModel() {
+		//
 	}
 	
-	public void pollLegecyDaemon() {
-		legecyDaemonTimer.scheduleAtFixedRate(new DaemonMonitor(), 2000, liveTime);
+	public static HedgehogModel getInstance() {
+		if(hedgehogModel == null) {
+			hedgehogModel = new HedgehogModel();
+		}
+		return hedgehogModel;
 	}
 
-	public void pollHedgehog() {
-		legecyDaemonTimer.scheduleAtFixedRate(new HedgehogMonitor(), 2000, liveTime);
+	public void setProcess(Process p) {
+		process = p;
+	}
+
+	public Process getProcess() {
+		return process;
 	}
 }
