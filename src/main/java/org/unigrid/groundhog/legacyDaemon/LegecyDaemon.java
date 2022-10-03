@@ -17,21 +17,25 @@ package org.unigrid.groundhog.legacyDaemon;
 
 import java.io.IOException;
 
+import org.unigrid.groundhog.model.GroundhogModel;
+
 public class LegecyDaemon {
 
 	private int port = 0;
 
 	private String testingStartCommand = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigridd";
-	private String startCommand = "/home/unigrid/.local/bin/unigridd";
+	private String startCommand;
 	private String[] startArgs = {"-daemon", "-server", "port="};
 	private String testCli = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigrid-cli";
-	private String cli = "/home/unigrid/.local/bin/unigrid-cli";
+	private String cli;
 	private String stop = "stop";
 
 	public LegecyDaemon() {
 		/* Empty on purpuse */
+		cli = GroundhogModel.getInstance().getLocation().concat("unigrid-cli");
+		startCommand = GroundhogModel.getInstance().getLocation().concat("unigridd");
 	}
-	
+
 	public LegecyDaemon(int port) {
 		this.port = port;
 		System.out.println(port);
@@ -39,21 +43,24 @@ public class LegecyDaemon {
 
 	public void stopDaemon() {
 		try {
-			Process p = new ProcessBuilder().command(testCli, stop).start();
+			Process p = new ProcessBuilder().command(cli, stop).start();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
 
 	public void startDaemon() {
+
+		Boolean isTesting = GroundhogModel.getInstance().getTesting();
+
 		try {
 			ProcessBuilder pb = new ProcessBuilder();
 			if(port > 0) {
-				pb.command(testingStartCommand, startArgs[0], startArgs[1], startArgs[2] + port);
+				pb.command(isTesting? testingStartCommand : startCommand, startArgs[0], startArgs[1], startArgs[2] + port);
 			} else {
-				pb.command(testingStartCommand, startArgs[0], startArgs[1]);
+				pb.command(isTesting? testingStartCommand : startCommand, startArgs[0], startArgs[1]);
 			}
-			System.out.println(testingStartCommand);
+			System.out.println(isTesting? testingStartCommand : startCommand);
 			Process p = pb.start();
 		} catch (IOException ex) {
 			ex.printStackTrace();
