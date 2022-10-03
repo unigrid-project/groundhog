@@ -28,6 +28,7 @@ public class Hedgehog {
 	public void startHedgehog() {
 		try {
 			Process p = new ProcessBuilder().command(testHedgehogStart).start();
+			p.isAlive();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

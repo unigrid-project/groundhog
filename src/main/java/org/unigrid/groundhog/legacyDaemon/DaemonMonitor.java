@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class DaemonMonitor extends TimerTask {
 
@@ -35,17 +36,19 @@ public class DaemonMonitor extends TimerTask {
 				.redirectError(ProcessBuilder.Redirect.INHERIT)
 				.redirectOutput(ProcessBuilder.Redirect.INHERIT)
 				.command(testExec, arg).start();
+			p.waitFor(120, TimeUnit.SECONDS);
 			InputStream out = p.getInputStream();
 			byte[] arr = out.readAllBytes();
 			message = new String(arr, StandardCharsets.UTF_8);
 			System.out.println(message);
-		} catch (IOException ex) {
+		} catch (IOException | InterruptedException ex) {
 			ex.printStackTrace();
 		}
 		try {
 			Integer.parseInt(message);
 		} catch(NumberFormatException e) {
 			LegecyDaemon daemon = new LegecyDaemon();
+			daemon.startDaemon();
 		}
 	}
 	
