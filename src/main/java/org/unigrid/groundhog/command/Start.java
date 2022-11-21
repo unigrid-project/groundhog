@@ -15,6 +15,7 @@
  */
 package org.unigrid.groundhog.command;
 
+import java.util.List;
 import org.unigrid.groundhog.hedgehog.Hedgehog;
 import org.unigrid.groundhog.legacyDaemon.LegecyDaemon;
 import org.unigrid.groundhog.model.GroundhogModel;
@@ -25,6 +26,7 @@ import picocli.CommandLine.Option;
 @Command(name = "start")
 public class Start implements Runnable {
 	private final static String DEFAULT_VALUE = "0";
+	private final static String DEFAULT_LOCATION = System.getProperty("user.home") + "/.unigrid/dependencies/bin/";
 
 	@Option(names = {"-hedgehogport", "--hp"}, description = "Port for hedgehog", defaultValue = DEFAULT_VALUE)
 	private int hedgehogPort;
@@ -32,42 +34,77 @@ public class Start implements Runnable {
 	@Option(names = {"-daemonport", "--dp"}, description = "Port for legecy daemon", defaultValue = DEFAULT_VALUE)
 	private int legecyDaemonPort;
 
-	@Option(names = {"-t", "--testing"}, description = "Set the environment for testing or production. Default value is false.")
+	@Option(names = {"-t", "--testing"},
+		description = "Set the environment for testing or production. Default value is false.",
+		defaultValue = "false")
 	public void appState(Boolean bool) {
 		System.out.println("testing: " + bool);
 		GroundhogModel.getInstance().setTesting(bool);
 	}
 
-	@Option(names = {"-l", "--location"}, description = "Set the daemon location for custom users names.")
+	@Option(names = {"-ll", "--legecylocation"}, description = "Set the daemon location for custom users names.",
+		defaultValue = "")
 	public void appLocation(String loc) {
-		System.out.println("location: " + loc);
+		if(loc.equals("")) {
+			loc = DEFAULT_LOCATION;
+		}
+		System.out.println("legecy location: " + loc);
 		GroundhogModel.getInstance().setLocation(loc);
 	}
+	
+	@Option(names = {"-hl", "--hedgehoglocation"}, description = "Set the hedgehog location for custom users names.",
+		defaultValue = "")
+	public void hedgehogLocation(String loc) {
+		if(loc.equals("")) {
+			loc = DEFAULT_LOCATION + "hedgehog-1.0.0-SNAPSHOT-jar-with-dependencies.jar";
+		}
+		System.out.println("legecy location: " + loc);
+		GroundhogModel.getInstance().setHedgehogLocation(loc);
+	}
+	
+	@Option(names = {"-li", "--legecyinputs"},
+		description = "Start inputs to the legecy daemon, args added without -. (testnet)")
+	public String[] legecyInputs;
 
 	private LegecyDaemon daemon;
 
 	@Override
 	public void run() {
+		
+		if(GroundhogModel.getInstance().getHedgehogLocation() == null) {
+			GroundhogModel.getInstance().setHedgehogLocation(DEFAULT_VALUE +
+				"hedgehog-1.0.0-SNAPSHOT-jar-with-dependencies.jar");
+		}
+		
+		if (legecyInputs != null) {
+			GroundhogModel.getInstance().setLegecyInputs(legecyInputs);
+		}
+		
 		if (legecyDaemonPort == 0) {
 			daemon = new LegecyDaemon();
 		} else {
 			daemon = new LegecyDaemon(legecyDaemonPort);
 		}
 
+
+		Hedgehog hedgehog = new Hedgehog();
+		hedgehog.startHedgehog();
+
 		daemon.startDaemon();
 
-		//Hedgehog hedgehog = new Hedgehog();
-		//hedgehog.startHedgehog();
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			@Override
 			public void run() {
 				daemon.stopDaemon();
-				//hedgehog.stopHedgehog();
+				hedgehog.stopHedgehog();
 			}
 		}));
 
 		TimerService timer = new TimerService();
 		timer.pollLegecyDaemon();
+		
+		TimerService hedgehogTimer = new TimerService();
+		timer.pollHedgehog();
 		while (true) {
 			try {
 				Thread.sleep(10);
