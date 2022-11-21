@@ -17,18 +17,24 @@
 package org.unigrid.groundhog.hedgehog;
 
 import java.io.IOException;
+import org.unigrid.groundhog.model.GroundhogModel;
 import org.unigrid.groundhog.model.HedgehogModel;
 
 public class Hedgehog {
 	private String testHedgehogStart = "";
 	private String hedgehogStart = "java -jar /home/unigrid/.local/bin/hedgehog.jar";
+	private String java = "java";
+	private String jar = "-jar";
 	private String arg = "daemon";
+	private String module = "--add-opens java.base/java.lang=ALL-UNNAMED";
 	private String testHedgehogStop = "";
 	private String hedgehogStop = "";
 	
 	public void startHedgehog() {
 		try {
-			Process p = new ProcessBuilder().command(testHedgehogStart).start();
+			String path = GroundhogModel.getInstance().getHedgehogLocation();
+			System.out.println("hedgehog start command" + java + jar + path + arg);
+			Process p = new ProcessBuilder().command(java, module, jar, path, arg).start();
 			HedgehogModel.getInstance().setProcess(p);
 			p.isAlive();
 		} catch (IOException ex) {
@@ -38,7 +44,8 @@ public class Hedgehog {
 	
 	public void stopHedgehog() {
 		try {
-			Process p = new ProcessBuilder().command(testHedgehogStop).start();
+			String path = GroundhogModel.getInstance().getHedgehogLocation();
+			Process p = new ProcessBuilder().command(java, module, jar, path, "cli", "stop").start();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

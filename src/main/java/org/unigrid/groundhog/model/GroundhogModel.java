@@ -16,12 +16,17 @@
 
 package org.unigrid.groundhog.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GroundhogModel {
 
 	private static GroundhogModel single_instance = null;
 
 	private Boolean testing;
 	private String location;
+	private String[] legecyInputs;
+	private String hedgehogLocation;
 
 	private GroundhogModel() {
 		// 
@@ -49,5 +54,26 @@ public class GroundhogModel {
 
 	public String getLocation() {
 		return this.location;
+	}
+	
+	public void setHedgehogLocation(String loc) {
+		this.hedgehogLocation = loc;
+	}
+	
+	public String getHedgehogLocation() {
+		return hedgehogLocation;
+	}
+	
+	public String[] getLegecyInputs () {
+		return this.legecyInputs;
+	}
+	
+	public void setLegecyInputs (String[] args) {
+		
+		legecyInputs = new String[args.length];
+		
+		for (int i = 0; i < args.length; i++) {
+			legecyInputs[i] = "-" + args[i];
+		}
 	}
 }

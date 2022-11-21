@@ -38,7 +38,7 @@ public class DaemonMonitor extends TimerTask {
 				.redirectInput(ProcessBuilder.Redirect.INHERIT)
 				.redirectError(ProcessBuilder.Redirect.INHERIT)
 				.redirectOutput(ProcessBuilder.Redirect.INHERIT)
-				.command(isTesting? testExec : liveExec, arg).start();
+				.command(isTesting? testExec : liveExec, isTesting? "-testnet" : "", arg).start();
 			p.waitFor(120, TimeUnit.SECONDS);
 			InputStream out = p.getInputStream();
 			byte[] arr = out.readAllBytes();

@@ -26,6 +26,8 @@ public class HedgehogMonitor extends TimerTask {
 			Hedgehog h = new Hedgehog();
 			h.stopHedgehog();
 			h.startHedgehog();
+		} else {
+			System.out.println("hedgehog is alive");
 		}
 	}
 	

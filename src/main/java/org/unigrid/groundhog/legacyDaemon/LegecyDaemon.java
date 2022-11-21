@@ -16,6 +16,8 @@
 package org.unigrid.groundhog.legacyDaemon;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.unigrid.groundhog.model.GroundhogModel;
 
@@ -26,12 +28,14 @@ public class LegecyDaemon {
 	private String testingStartCommand = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigridd";
 	private String startCommand;
 	private String[] startArgs = {"-daemon", "-server", "port="};
-	private String testCli = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigrid-cli";
+	private String testCli = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigrid-cli -testnet";
 	private String cli;
 	private String stop = "stop";
 
 	public LegecyDaemon() {
 		/* Empty on purpuse */
+		Boolean isTesting = GroundhogModel.getInstance().getTesting();
+		System.out.println("legecy location = " + GroundhogModel.getInstance().getLocation());
 		cli = GroundhogModel.getInstance().getLocation().concat("unigrid-cli");
 		startCommand = GroundhogModel.getInstance().getLocation().concat("unigridd");
 	}
@@ -52,13 +56,57 @@ public class LegecyDaemon {
 	public void startDaemon() {
 
 		Boolean isTesting = GroundhogModel.getInstance().getTesting();
-
 		try {
+			String[] args;
 			ProcessBuilder pb = new ProcessBuilder();
-			if(port > 0) {
-				pb.command(isTesting? testingStartCommand : startCommand, startArgs[0], startArgs[1], startArgs[2] + port);
+			if (GroundhogModel.getInstance().getLegecyInputs() != null) {
+				args = new String[4 + GroundhogModel.getInstance().getLegecyInputs().length];
+				args[0] = startCommand;
+				args[1] = startArgs[0];
+				args[2] = startArgs[1];
+				
+				for (int i = 0; i < GroundhogModel.getInstance().getLegecyInputs().length; i++) {
+				args[i + 3] = GroundhogModel.getInstance().getLegecyInputs()[i];
+				}
 			} else {
-				pb.command(isTesting? testingStartCommand : startCommand, startArgs[0], startArgs[1]);
+				args = new String[1];
+			}
+			
+			if(port > 0) {
+				if (GroundhogModel.getInstance().getLegecyInputs() != null) {
+					args = new String[4 + GroundhogModel.getInstance().getLegecyInputs().length];
+					args[0] = startCommand;
+					args[1] = startArgs[0];
+					args[2] = startArgs[1];
+				
+					for (int i = 0; i < GroundhogModel.getInstance().getLegecyInputs().length; i++) {
+						args[i + 3] = GroundhogModel.getInstance().getLegecyInputs()[i];
+					}
+					args[args.length - 1] = startArgs[2] + port;
+					pb.command(args);
+				} else {
+					pb.command(isTesting? testingStartCommand : startCommand, startArgs[0], startArgs[1], startArgs[2] + port);					
+				}
+			} else {
+				if (GroundhogModel.getInstance().getLegecyInputs() != null) {
+					args = new String[3 + GroundhogModel.getInstance().getLegecyInputs().length];
+					args[0] = startCommand;
+					args[1] = startArgs[0];
+					args[2] = startArgs[1];
+				
+					for (int i = 0; i < GroundhogModel.getInstance().getLegecyInputs().length; i++) {
+						args[i + 3] = GroundhogModel.getInstance().getLegecyInputs()[i];
+					}
+					for(String arg : args) {
+						System.out.println(arg);
+					}
+					pb.command(args);
+				} else {
+					pb.command(isTesting? testingStartCommand : startCommand, startArgs[0], startArgs[1], isTesting? "-testnet" : "");
+				}
+			}
+			if (GroundhogModel.getInstance().getLegecyInputs() != null) {
+				pb.command(GroundhogModel.getInstance().getLegecyInputs());
 			}
 			System.out.println(isTesting? testingStartCommand : startCommand);
 			Process p = pb.start();
