@@ -24,21 +24,26 @@ import org.unigrid.groundhog.model.GroundhogModel;
 
 public class DaemonMonitor extends TimerTask {
 
-	private String testExec = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigrid-cli";
+	private String testExec = "/usr/local/bin/";
 	private String arg = "getblockcount";
 	private String liveExec;
 
 	@Override
 	public void run() {
 		String message = "";
-		Boolean isTesting = GroundhogModel.getInstance().getTesting();
+		boolean isTesting = GroundhogModel.getInstance().getTesting();
 		liveExec = GroundhogModel.getInstance().getLocation().concat("unigrid-cli");
 		try {
-			Process p = new ProcessBuilder()
+			ProcessBuilder pb = new ProcessBuilder()
 				.redirectInput(ProcessBuilder.Redirect.INHERIT)
 				.redirectError(ProcessBuilder.Redirect.INHERIT)
-				.redirectOutput(ProcessBuilder.Redirect.INHERIT)
-				.command(isTesting? testExec : liveExec, isTesting? "-testnet" : "", arg).start();
+				.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+			if(isTesting) {
+				pb.command(liveExec, "-testnet", arg);				
+			} else {
+				pb.command(liveExec, arg);
+			}
+			Process p = pb.start();
 			p.waitFor(120, TimeUnit.SECONDS);
 			InputStream out = p.getInputStream();
 			byte[] arr = out.readAllBytes();

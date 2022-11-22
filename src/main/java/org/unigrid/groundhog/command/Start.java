@@ -26,7 +26,7 @@ import picocli.CommandLine.Option;
 @Command(name = "start")
 public class Start implements Runnable {
 	private final static String DEFAULT_VALUE = "0";
-	private final static String DEFAULT_LOCATION = System.getProperty("user.home") + "/.unigrid/dependencies/bin/";
+	private final static String DEFAULT_LOCATION = "/usr/local/bin/";
 
 	@Option(names = {"-hedgehogport", "--hp"}, description = "Port for hedgehog", defaultValue = DEFAULT_VALUE)
 	private int hedgehogPort;
@@ -45,9 +45,6 @@ public class Start implements Runnable {
 	@Option(names = {"-ll", "--legecylocation"}, description = "Set the daemon location for custom users names.",
 		defaultValue = "")
 	public void appLocation(String loc) {
-		if(loc.equals("")) {
-			loc = DEFAULT_LOCATION;
-		}
 		System.out.println("legecy location: " + loc);
 		GroundhogModel.getInstance().setLocation(loc);
 	}

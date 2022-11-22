@@ -24,8 +24,9 @@ import org.unigrid.groundhog.model.GroundhogModel;
 public class LegecyDaemon {
 
 	private int port = 0;
+	private boolean isTesting;
 
-	private String testingStartCommand = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigridd";
+	private String testingStartCommand = "";
 	private String startCommand;
 	private String[] startArgs = {"-daemon", "-server", "port="};
 	private String testCli = System.getProperty("user.home") + "/.unigrid/dependencies/bin/unigrid-cli -testnet";
@@ -33,8 +34,6 @@ public class LegecyDaemon {
 	private String stop = "stop";
 
 	public LegecyDaemon() {
-		/* Empty on purpuse */
-		Boolean isTesting = GroundhogModel.getInstance().getTesting();
 		System.out.println("legecy location = " + GroundhogModel.getInstance().getLocation());
 		cli = GroundhogModel.getInstance().getLocation().concat("unigrid-cli");
 		startCommand = GroundhogModel.getInstance().getLocation().concat("unigridd");
@@ -47,7 +46,11 @@ public class LegecyDaemon {
 
 	public void stopDaemon() {
 		try {
-			Process p = new ProcessBuilder().command(cli, stop).start();
+			if(isTesting) {
+				Process p = new ProcessBuilder().command(cli, stop).start();				
+			} else {
+				Process p = new ProcessBuilder().command(cli, "-testnet", stop).start();
+			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -55,7 +58,7 @@ public class LegecyDaemon {
 
 	public void startDaemon() {
 
-		Boolean isTesting = GroundhogModel.getInstance().getTesting();
+		isTesting = GroundhogModel.getInstance().getTesting();
 		try {
 			String[] args;
 			ProcessBuilder pb = new ProcessBuilder();
@@ -66,7 +69,7 @@ public class LegecyDaemon {
 				args[2] = startArgs[1];
 				
 				for (int i = 0; i < GroundhogModel.getInstance().getLegecyInputs().length; i++) {
-				args[i + 3] = GroundhogModel.getInstance().getLegecyInputs()[i];
+					args[i + 3] = GroundhogModel.getInstance().getLegecyInputs()[i];
 				}
 			} else {
 				args = new String[1];
@@ -102,7 +105,13 @@ public class LegecyDaemon {
 					}
 					pb.command(args);
 				} else {
-					pb.command(isTesting? testingStartCommand : startCommand, startArgs[0], startArgs[1], isTesting? "-testnet" : "");
+					System.out.println(String.format("%s %s %s ", isTesting? testingStartCommand : startCommand, startArgs[0], isTesting? "-testnet" : ""));
+					//pb.command(isTesting? testingStartCommand : startCommand, startArgs[0], isTesting? "-testnet" : "");
+					if(isTesting) {
+						pb.command(startCommand, startArgs[0], startArgs[1], "-testnet");
+					} else {
+						pb.command(startCommand, startArgs[0], startArgs[1]);
+					}
 				}
 			}
 			if (GroundhogModel.getInstance().getLegecyInputs() != null) {
