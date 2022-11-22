@@ -24,7 +24,7 @@ public class GroundhogModel {
 	private static GroundhogModel single_instance = null;
 
 	private Boolean testing;
-	private String location;
+	private String location = "";
 	private String[] legecyInputs;
 	private String hedgehogLocation;
 
