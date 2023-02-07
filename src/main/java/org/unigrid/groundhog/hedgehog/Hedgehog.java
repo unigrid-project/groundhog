@@ -34,7 +34,7 @@ public class Hedgehog {
 		try {
 			String path = GroundhogModel.getInstance().getHedgehogLocation();
 			System.out.println("hedgehog start command" + java + jar + path + arg);
-			Process p = new ProcessBuilder().command(java, module, jar, path, arg).start();
+			Process p = new ProcessBuilder().command(path, arg).start();
 			HedgehogModel.getInstance().setProcess(p);
 			p.isAlive();
 		} catch (IOException ex) {
@@ -45,7 +45,7 @@ public class Hedgehog {
 	public void stopHedgehog() {
 		try {
 			String path = GroundhogModel.getInstance().getHedgehogLocation();
-			Process p = new ProcessBuilder().command(java, module, jar, path, "cli", "stop").start();
+			Process p = new ProcessBuilder().command(path, "cli", "stop").start();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
