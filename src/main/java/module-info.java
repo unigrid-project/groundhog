@@ -16,4 +16,5 @@
 
 module UnigridGroundhog {
 	requires info.picocli;
+	requires lombok;
 }
