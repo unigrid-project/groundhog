@@ -53,9 +53,9 @@ public class Start implements Runnable {
 		defaultValue = "")
 	public void hedgehogLocation(String loc) {
 		if(loc.equals("")) {
-			loc = DEFAULT_LOCATION + "hedgehog-1.0.0-SNAPSHOT-jar-with-dependencies.jar";
+			loc = DEFAULT_LOCATION + "hedgehog.bin";
 		}
-		System.out.println("legecy location: " + loc);
+		System.out.println("hedgehog location: " + loc);
 		GroundhogModel.getInstance().setHedgehogLocation(loc);
 	}
 	

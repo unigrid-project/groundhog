@@ -17,6 +17,8 @@
 package org.unigrid.groundhog.hedgehog;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import lombok.SneakyThrows;
 import org.unigrid.groundhog.model.GroundhogModel;
 import org.unigrid.groundhog.model.HedgehogModel;
 
@@ -33,11 +35,14 @@ public class Hedgehog {
 	public void startHedgehog() {
 		try {
 			String path = GroundhogModel.getInstance().getHedgehogLocation();
-			System.out.println("hedgehog start command" + java + jar + path + arg);
+			System.out.println("hedgehog start command" + path + arg);
 			Process p = new ProcessBuilder().command(path, arg).start();
 			HedgehogModel.getInstance().setProcess(p);
+			p.waitFor(10, TimeUnit.SECONDS);
 			p.isAlive();
 		} catch (IOException ex) {
+			ex.printStackTrace();
+		} catch (InterruptedException ex) {
 			ex.printStackTrace();
 		}
 	}
