@@ -34,7 +34,7 @@ public class Hedgehog {
 	
 	public void startHedgehog() {
 		try {
-			String path = GroundhogModel.getInstance().getHedgehogLocation();
+			String path = GroundhogModel.getInstance().getHedgehogLocation().concat("hedgehog.bin");
 			System.out.println("hedgehog start command" + path + arg);
 			Process p = new ProcessBuilder().command(path, arg).start();
 			HedgehogModel.getInstance().setProcess(p);
