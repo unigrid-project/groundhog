@@ -18,6 +18,7 @@ package org.unigrid.groundhog.legacyDaemon;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import org.unigrid.groundhog.model.GroundhogModel;
@@ -34,12 +35,13 @@ public class DaemonMonitor extends TimerTask {
 		boolean isTesting = GroundhogModel.getInstance().getTesting();
 		liveExec = GroundhogModel.getInstance().getLocation().concat("unigrid-cli");
 		try {
+			System.out.println("DaemonMonitor run");
 			ProcessBuilder pb = new ProcessBuilder()
-				.redirectInput(ProcessBuilder.Redirect.INHERIT)
-				.redirectError(ProcessBuilder.Redirect.INHERIT)
-				.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-			if(isTesting) {
-				pb.command(liveExec, "-testnet", arg);				
+					.redirectInput(ProcessBuilder.Redirect.PIPE)
+					.redirectError(ProcessBuilder.Redirect.PIPE)
+					.redirectOutput(ProcessBuilder.Redirect.PIPE);	
+			if (isTesting) {
+				pb.command(liveExec, "-testnet", arg);
 			} else {
 				pb.command(liveExec, arg);
 			}
@@ -47,21 +49,24 @@ public class DaemonMonitor extends TimerTask {
 			p.waitFor(120, TimeUnit.SECONDS);
 			InputStream out = p.getInputStream();
 			byte[] arr = out.readAllBytes();
-			message = new String(arr, StandardCharsets.UTF_8);
-			if(message.equals("-1")) {
+			System.out.printf("Raw output bytes: %s\n", Arrays.toString(arr));
+			message = new String(arr, StandardCharsets.UTF_8).trim();
+			System.out.printf("Trimmed message: %s\n", message);
+			if (message.equals("-1")) {
 				System.out.println("syncing");
 			} else {
-				System.out.println("blocks: " + message);
+				System.out.printf("blocks: %s\n", message);
 			}
 		} catch (IOException | InterruptedException ex) {
 			ex.printStackTrace();
 		}
 		try {
 			Integer.parseInt(message);
-		} catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
+			System.out.printf("NumberFormatException: %s\n", e.getMessage());
 			LegecyDaemon daemon = new LegecyDaemon();
 			daemon.startDaemon();
 		}
 	}
-	
+
 }

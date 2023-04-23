@@ -34,7 +34,7 @@ public class LegecyDaemon {
 	private String stop = "stop";
 
 	public LegecyDaemon() {
-		System.out.println("legecy location = " + GroundhogModel.getInstance().getLocation());
+		System.out.printf("legecy location = %s\n", GroundhogModel.getInstance().getLocation());
 		cli = GroundhogModel.getInstance().getLocation().concat("unigrid-cli");
 		startCommand = GroundhogModel.getInstance().getLocation().concat("unigridd");
 	}
@@ -57,7 +57,7 @@ public class LegecyDaemon {
 	}
 
 	public void startDaemon() {
-
+		System.out.println("Trying to start the daemon");
 		isTesting = GroundhogModel.getInstance().getTesting();
 		try {
 			String[] args;

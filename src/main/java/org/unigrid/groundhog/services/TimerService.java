@@ -32,10 +32,10 @@ public class TimerService {
 	}
 	
 	public void pollLegecyDaemon() {
-		legecyDaemonTimer.scheduleAtFixedRate(new DaemonMonitor(), 2000, liveTime);
+		legecyDaemonTimer.scheduleAtFixedRate(new DaemonMonitor(), 4000, liveTime);
 	}
 
 	public void pollHedgehog() {
-		legecyDaemonTimer.scheduleAtFixedRate(new HedgehogMonitor(), 2000, liveTime);
+		legecyDaemonTimer.scheduleAtFixedRate(new HedgehogMonitor(), 4000, liveTime);
 	}
 }
