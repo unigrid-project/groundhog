@@ -38,14 +38,14 @@ public class Start implements Runnable {
 		description = "Set the environment for testing or production. Default value is false.",
 		defaultValue = "false")
 	public void appState(Boolean bool) {
-		System.out.println("testing: " + bool);
+		System.out.printf("testing: %s\n", bool);
 		GroundhogModel.getInstance().setTesting(bool);
 	}
 
 	@Option(names = {"-ll", "--legecylocation"}, description = "Set the daemon location for custom users names.",
 		defaultValue = "")
 	public void appLocation(String loc) {
-		System.out.println("legecy location: " + loc);
+		System.out.printf("legecy location: %s\n", loc);
 		GroundhogModel.getInstance().setLocation(loc);
 	}
 	
@@ -55,7 +55,7 @@ public class Start implements Runnable {
 		if(loc.equals("")) {
 			loc = DEFAULT_LOCATION;
 		}
-		System.out.println("hedgehog location: " + loc);
+		System.out.printf("hedgehog location: %s\n", loc);
 		GroundhogModel.getInstance().setHedgehogLocation(loc);
 	}
 	
