@@ -68,11 +68,6 @@ public class Start implements Runnable {
 	@Override
 	public void run() {
 		
-		if(GroundhogModel.getInstance().getHedgehogLocation() == null) {
-			GroundhogModel.getInstance().setHedgehogLocation(DEFAULT_VALUE +
-				"hedgehog-1.0.0-SNAPSHOT-jar-with-dependencies.jar");
-		}
-		
 		if (legecyInputs != null) {
 			GroundhogModel.getInstance().setLegecyInputs(legecyInputs);
 		}
