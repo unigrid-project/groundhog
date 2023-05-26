@@ -15,10 +15,18 @@
  */
 package org.unigrid.groundhog.model;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+@Data
 public class HedgehogModel {
 
 	private static HedgehogModel hedgehogModel = null;
 	private Process process = null;
+
+	@Getter @Setter
+	private int p2pPort;
 
 	private HedgehogModel() {
 		//

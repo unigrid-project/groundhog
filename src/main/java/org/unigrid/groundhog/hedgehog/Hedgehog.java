@@ -31,12 +31,20 @@ public class Hedgehog {
 	private String module = "--add-opens java.base/java.lang=ALL-UNNAMED";
 	private String testHedgehogStop = "";
 	private String hedgehogStop = "";
-	
+
 	public void startHedgehog() {
 		try {
+			int p2pPort = HedgehogModel.getInstance().getP2pPort();
+			
 			String path = GroundhogModel.getInstance().getHedgehogLocation() + "hedgehog.bin";
 			System.out.println("hedgehog start command" + path + " " + arg);
-			Process p = new ProcessBuilder().command(path, arg).start();
+			ProcessBuilder pb = new ProcessBuilder();
+			if(p2pPort == 0) {
+				pb = new ProcessBuilder().command(path, arg);
+			} else {
+				pb = new ProcessBuilder().command(path, arg, "--netport=" + p2pPort);
+			}
+			Process p = pb.start();
 			HedgehogModel.getInstance().setProcess(p);
 			p.waitFor(10, TimeUnit.SECONDS);
 			p.isAlive();
