@@ -19,6 +19,7 @@ import java.util.List;
 import org.unigrid.groundhog.hedgehog.Hedgehog;
 import org.unigrid.groundhog.legacyDaemon.LegecyDaemon;
 import org.unigrid.groundhog.model.GroundhogModel;
+import org.unigrid.groundhog.model.HedgehogModel;
 import org.unigrid.groundhog.services.TimerService;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -83,7 +84,7 @@ public class Start implements Runnable {
 			daemon = new LegecyDaemon(legecyDaemonPort);
 		}
 
-
+		HedgehogModel.getInstance().setP2pPort(hedgehogPort);
 		Hedgehog hedgehog = new Hedgehog();
 		hedgehog.startHedgehog();
 
