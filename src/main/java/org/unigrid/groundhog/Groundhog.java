@@ -21,7 +21,7 @@ import org.unigrid.groundhog.command.CLI;
 import picocli.CommandLine.Command;
 import picocli.CommandLine;
 
-@Command(name = "groundhog", mixinStandardHelpOptions = true, version = "Unigrid Groundhog 0.0.2",
+@Command(name = "groundhog", mixinStandardHelpOptions = true, version = "Unigrid Groundhog 0.0.3-SNAPSHOT",
 	scope = CommandLine.ScopeType.INHERIT, header = {
 		"",
 		"          .:^~~~~~^::..",
@@ -42,7 +42,7 @@ import picocli.CommandLine;
 		"                    .^?JJYYYJ!.  ~J!?!7~~??JY5YJJ?7!^:.      .:::^~~7??777?7~^.",
 		"                  ~55PPG5J7~.        ^7?JPPPPPJ~:..",
 		"                  ~^?7~7:           .J5G575J!:",
-		"                                       .    Unigrid Groundhog 0.0.2",   
+		"                                       .    Unigrid Groundhog 0.0.3-SNAPSHOT",   
 	}, subcommands = {CLI.class, Start.class}
 )
 public class Groundhog {
