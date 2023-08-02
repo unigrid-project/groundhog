@@ -1,0 +1,12 @@
+syntax = "proto3";
+package unigrid.unigrid;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "unigrid/x/unigrid/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}

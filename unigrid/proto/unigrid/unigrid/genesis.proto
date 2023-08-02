@@ -1,0 +1,12 @@
+syntax = "proto3";
+package unigrid.unigrid;
+
+import "gogoproto/gogo.proto";
+import "unigrid/unigrid/params.proto";
+
+option go_package = "unigrid/x/unigrid/types";
+
+// GenesisState defines the unigrid module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
