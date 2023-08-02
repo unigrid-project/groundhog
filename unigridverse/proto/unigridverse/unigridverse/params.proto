@@ -1,0 +1,12 @@
+syntax = "proto3";
+package unigridverse.unigridverse;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "unigridverse/x/unigridverse/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}

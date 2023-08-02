@@ -1,0 +1,12 @@
+syntax = "proto3";
+package unigridverse.unigridverse;
+
+import "gogoproto/gogo.proto";
+import "unigridverse/unigridverse/params.proto";
+
+option go_package = "unigridverse/x/unigridverse/types";
+
+// GenesisState defines the unigridverse module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}

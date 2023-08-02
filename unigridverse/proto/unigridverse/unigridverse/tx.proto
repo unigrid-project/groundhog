@@ -1,0 +1,7 @@
+syntax = "proto3";
+package unigridverse.unigridverse;
+
+option go_package = "unigridverse/x/unigridverse/types";
+
+// Msg defines the Msg service.
+service Msg {}
