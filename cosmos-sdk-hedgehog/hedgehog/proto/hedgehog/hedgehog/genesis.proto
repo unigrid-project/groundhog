@@ -1,0 +1,12 @@
+syntax = "proto3";
+package hedgehog.hedgehog;
+
+import "gogoproto/gogo.proto";
+import "hedgehog/hedgehog/params.proto";
+
+option go_package = "hedgehog/x/hedgehog/types";
+
+// GenesisState defines the hedgehog module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
