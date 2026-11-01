@@ -15,9 +15,7 @@
  */
 package org.unigrid.groundhog.command;
 
-import java.util.List;
 import org.unigrid.groundhog.hedgehog.Hedgehog;
-import org.unigrid.groundhog.legacyDaemon.LegecyDaemon;
 import org.unigrid.groundhog.model.GroundhogModel;
 import org.unigrid.groundhog.model.HedgehogModel;
 import org.unigrid.groundhog.services.TimerService;
@@ -32,24 +30,6 @@ public class Start implements Runnable {
 	@Option(names = {"-hedgehogport", "--hp"}, description = "Port for hedgehog", defaultValue = DEFAULT_VALUE)
 	private int hedgehogPort;
 
-	@Option(names = {"-daemonport", "--dp"}, description = "Port for legecy daemon", defaultValue = DEFAULT_VALUE)
-	private int legecyDaemonPort;
-
-	@Option(names = {"-t", "--testing"},
-		description = "Set the environment for testing or production. Default value is false.",
-		defaultValue = "false")
-	public void appState(Boolean bool) {
-		System.out.printf("testing: %s\n", bool);
-		GroundhogModel.getInstance().setTesting(bool);
-	}
-
-	@Option(names = {"-ll", "--legecylocation"}, description = "Set the daemon location for custom users names.",
-		defaultValue = "")
-	public void appLocation(String loc) {
-		System.out.printf("legecy location: %s\n", loc);
-		GroundhogModel.getInstance().setLocation(loc);
-	}
-	
 	@Option(names = {"-hl", "--hedgehoglocation"}, description = "Set the hedgehog location for custom users names.",
 		defaultValue = "")
 	public void hedgehogLocation(String loc) {
@@ -60,43 +40,20 @@ public class Start implements Runnable {
 		GroundhogModel.getInstance().setHedgehogLocation(loc);
 	}
 	
-	@Option(names = {"-li", "--legecyinputs"},
-		description = "Start inputs to the legecy daemon, args added without -. (testnet)")
-	public String[] legecyInputs;
-
-	private LegecyDaemon daemon;
-
 	@Override
 	public void run() {
-		
-		if (legecyInputs != null) {
-			GroundhogModel.getInstance().setLegecyInputs(legecyInputs);
-		}
-		
-		if (legecyDaemonPort == 0) {
-			daemon = new LegecyDaemon();
-		} else {
-			daemon = new LegecyDaemon(legecyDaemonPort);
-		}
-
 		HedgehogModel.getInstance().setP2pPort(hedgehogPort);
 		Hedgehog hedgehog = new Hedgehog();
 		hedgehog.startHedgehog();
 
-		daemon.startDaemon();
-
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			@Override
 			public void run() {
-				daemon.stopDaemon();
 				hedgehog.stopHedgehog();
 			}
 		}));
 
 		TimerService timer = new TimerService();
-		timer.pollLegecyDaemon();
-		
-		TimerService hedgehogTimer = new TimerService();
 		timer.pollHedgehog();
 		while (true) {
 			try {

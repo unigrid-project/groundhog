@@ -18,24 +18,16 @@ package org.unigrid.groundhog.services;
 
 import java.util.Timer;
 import org.unigrid.groundhog.hedgehog.HedgehogMonitor;
-import org.unigrid.groundhog.legacyDaemon.DaemonMonitor;
 
 public class TimerService {
-	private Timer legecyDaemonTimer;
 	private Timer hedgehogTimer;
 	private int liveTime = 120000;
-	private int testTime = 5000;
 
 	public TimerService() {
-		legecyDaemonTimer = new Timer(false);
 		hedgehogTimer = new Timer(false);
 	}
 
-	public void pollLegecyDaemon() {
-		legecyDaemonTimer.scheduleAtFixedRate(new DaemonMonitor(), 30000, liveTime);
-	}
-
 	public void pollHedgehog() {
-		legecyDaemonTimer.scheduleAtFixedRate(new HedgehogMonitor(), 30000, liveTime);
+		hedgehogTimer.scheduleAtFixedRate(new HedgehogMonitor(), 30000, liveTime);
 	}
 }
