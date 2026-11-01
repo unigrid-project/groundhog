@@ -62,5 +62,5 @@ Some things to know:
 
 ## License
 
-Groundhog is released by the Unigrid Foundation and UGD Software AB under the addended GNU Affero General
-Public License, version 3. See the headers of the source files.
+Groundhog is released by the Unigrid Foundation and UGD Software AB under the GNU Affero General Public
+License, version 3. See [LICENSE](LICENSE).
