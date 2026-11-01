@@ -20,9 +20,24 @@ import org.unigrid.groundhog.model.HedgehogModel;
 
 public class HedgehogMonitor extends TimerTask {
 
+	/* An exception out of a timer task would cancel the timer, and the update check shares it. */
 	@Override
 	public void run() {
-		if(!HedgehogModel.getInstance().getProcess().isAlive()) {
+		try {
+			check();
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void check() {
+		Process process = HedgehogModel.getInstance().getProcess();
+
+		if (process == null) {
+			return;
+		}
+
+		if (!process.isAlive()) {
 			Hedgehog h = new Hedgehog();
 			h.stopHedgehog();
 			h.startHedgehog();

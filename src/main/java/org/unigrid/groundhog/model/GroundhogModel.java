@@ -16,7 +16,10 @@
 
 package org.unigrid.groundhog.model;
 
+import java.nio.file.Path;
+
 public class GroundhogModel {
+	private static final String HEDGEHOG_BINARY = "hedgehog.bin";
 
 	private static GroundhogModel single_instance = null;
 
@@ -40,5 +43,9 @@ public class GroundhogModel {
 	
 	public String getHedgehogLocation() {
 		return hedgehogLocation;
+	}
+
+	public Path getHedgehogBinary() {
+		return Path.of(hedgehogLocation).resolve(HEDGEHOG_BINARY);
 	}
 }
