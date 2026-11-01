@@ -18,6 +18,8 @@ package org.unigrid.groundhog.services;
 
 import java.util.Timer;
 import org.unigrid.groundhog.hedgehog.HedgehogMonitor;
+import org.unigrid.groundhog.update.HedgehogUpdater;
+import org.unigrid.groundhog.update.UpdateMonitor;
 
 public class TimerService {
 	private Timer hedgehogTimer;
@@ -29,5 +31,9 @@ public class TimerService {
 
 	public void pollHedgehog() {
 		hedgehogTimer.scheduleAtFixedRate(new HedgehogMonitor(), 30000, liveTime);
+	}
+
+	public void pollUpdates(HedgehogUpdater updater, long intervalMillis) {
+		hedgehogTimer.scheduleAtFixedRate(new UpdateMonitor(updater), intervalMillis, intervalMillis);
 	}
 }
