@@ -16,5 +16,8 @@
 
 module UnigridGroundhog {
 	requires info.picocli;
+	requires java.net.http;
 	requires lombok;
+	requires org.bouncycastle.pg;
+	requires org.bouncycastle.provider;
 }
