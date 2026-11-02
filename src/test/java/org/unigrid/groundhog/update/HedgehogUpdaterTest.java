@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
+import java.time.Duration;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +100,10 @@ class HedgehogUpdaterTest {
 	}
 
 	private HedgehogUpdater updater() {
+		return updater(Duration.ofSeconds(60));
+	}
+
+	private HedgehogUpdater updater(final Duration limit) {
 		final ReleaseKey key = new ReleaseKey(null) {
 			@Override
 			public boolean verify(final byte[] data, final byte[] signature) {
@@ -112,7 +117,7 @@ class HedgehogUpdaterTest {
 		};
 
 		return new HedgehogUpdater(node, binary, URI.create("http://localhost:" + server.getAddress().getPort()
-			+ "/releases/"), key);
+			+ "/releases/"), key, limit, limit);
 	}
 
 	private static String sha256(final byte[] bytes) {
@@ -225,6 +230,58 @@ class HedgehogUpdaterTest {
 		assertFalse(downloaded());
 		assertEquals(script, Files.readString(binary));
 		assertEquals(1, Files.readAllLines(runs).size());
+	}
+
+	/* Answers with the start of the body and then goes quiet, as a connection that stalls does. */
+	private void stall(final String path) {
+		server.createContext(path, exchange -> {
+			exchange.sendResponseHeaders(200, 1000);
+			exchange.getResponseBody().write(new byte[10]);
+			exchange.getResponseBody().flush();
+			sleep(2000);
+			exchange.close();
+		});
+	}
+
+	private static void sleep(final long millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+	}
+
+	@Test
+	void givesUpOnChecksumsThatStall() throws IOException {
+		Files.write(binary, OLD);
+		stall("/releases/latest/download/SHA256SUMS");
+		final long start = System.nanoTime();
+
+		assertFalse(updater(Duration.ofMillis(500)).update());
+		assertTrue(Duration.ofNanos(System.nanoTime() - start).toMillis() < 1500);
+		assertArrayEquals(OLD, Files.readAllBytes(binary));
+	}
+
+	@Test
+	void givesUpOnADownloadThatStalls() throws IOException {
+		Files.write(binary, OLD);
+		stall(DOWNLOADS + ASSET);
+		final long start = System.nanoTime();
+
+		assertFalse(updater(Duration.ofMillis(500)).update());
+		assertTrue(Duration.ofNanos(System.nanoTime() - start).toMillis() < 1500);
+		assertArrayEquals(OLD, Files.readAllBytes(binary));
+		assertFalse(leftPartialFile());
+	}
+
+	@Test
+	void refusesChecksumsThatAreTooLarge() throws IOException {
+		Files.write(binary, OLD);
+		served.put("/releases/latest/download/SHA256SUMS", new byte[100_000]);
+
+		assertFalse(updater().update());
+		assertFalse(downloaded());
+		assertArrayEquals(OLD, Files.readAllBytes(binary));
 	}
 
 	private static final class FakeNode implements HedgehogNode {

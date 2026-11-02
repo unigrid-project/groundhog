@@ -36,6 +36,7 @@ import java.time.Duration;
 import java.util.HexFormat;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import org.unigrid.groundhog.hedgehog.HedgehogNode;
 import org.unigrid.groundhog.model.GroundhogModel;
@@ -51,6 +52,10 @@ public class HedgehogUpdater {
 	private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(15);
 	private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(60);
 	private static final Duration VERSION_TIMEOUT = Duration.ofSeconds(60);
+	private static final Duration FETCH_LIMIT = Duration.ofSeconds(60);
+	private static final Duration DOWNLOAD_LIMIT = Duration.ofMinutes(30);
+	private static final int MAX_FETCH_BYTES = 1 << 16;
+	private static final long MAX_EXECUTABLE_BYTES = 1L << 30;
 	private static final String SUMS = "SHA256SUMS";
 	private static final String SIGNATURE = ".asc";
 	private static final String PARTIAL = ".part";
@@ -60,6 +65,8 @@ public class HedgehogUpdater {
 	private final Path binary;
 	private final URI releases;
 	private final ReleaseKey key;
+	private final Duration fetchLimit;
+	private final Duration downloadLimit;
 	private final HttpClient http = HttpClient.newBuilder().connectTimeout(CONNECT_TIMEOUT)
 		.followRedirects(HttpClient.Redirect.NORMAL).build();
 
@@ -67,14 +74,19 @@ public class HedgehogUpdater {
 	private String newerChecksum = "";
 
 	public HedgehogUpdater(final HedgehogNode node) {
-		this(node, GroundhogModel.getInstance().getHedgehogBinary(), RELEASES, new ReleaseKey());
+		this(node, GroundhogModel.getInstance().getHedgehogBinary(), RELEASES, new ReleaseKey(), FETCH_LIMIT,
+			DOWNLOAD_LIMIT);
 	}
 
-	HedgehogUpdater(final HedgehogNode node, final Path binary, final URI releases, final ReleaseKey key) {
+	HedgehogUpdater(final HedgehogNode node, final Path binary, final URI releases, final ReleaseKey key,
+		final Duration fetchLimit, final Duration downloadLimit) {
+
 		this.node = node;
 		this.binary = binary;
 		this.releases = releases;
 		this.key = key;
+		this.fetchLimit = fetchLimit;
+		this.downloadLimit = downloadLimit;
 	}
 
 	/** Returns false when the check failed, which leaves the installed executable and the node as they were. */
@@ -206,9 +218,18 @@ public class HedgehogUpdater {
 	}
 
 	private byte[] fetch(final URI source) throws IOException, InterruptedException {
-		final HttpResponse<byte[]> response = http.send(request(source), HttpResponse.BodyHandlers.ofByteArray());
-		requireOk(response.statusCode(), source);
-		return response.body();
+		final HttpResponse<InputStream> response = http.send(request(source), HttpResponse.BodyHandlers.ofInputStream());
+
+		try (InputStream body = response.body()) {
+			requireOk(response.statusCode(), source);
+			final byte[] bytes = within(fetchLimit, body, () -> body.readNBytes(MAX_FETCH_BYTES + 1));
+
+			if (bytes.length > MAX_FETCH_BYTES) {
+				throw new IOException(source + " is larger than " + MAX_FETCH_BYTES + " bytes");
+			}
+
+			return bytes;
+		}
 	}
 
 	/* Returns the checksum of what was written, worked out on the way so the file is not read again. */
@@ -217,10 +238,48 @@ public class HedgehogUpdater {
 
 		try (InputStream body = response.body()) {
 			requireOk(response.statusCode(), source);
+
+			if (response.headers().firstValueAsLong("content-length").orElse(0) > MAX_EXECUTABLE_BYTES) {
+				throw new IOException(source + " is larger than " + MAX_EXECUTABLE_BYTES + " bytes");
+			}
+
 			final MessageDigest digest = digest();
-			Files.copy(new DigestInputStream(body, digest), partial, StandardCopyOption.REPLACE_EXISTING);
+			within(downloadLimit, body, () -> Files.copy(new DigestInputStream(body, digest), partial,
+				StandardCopyOption.REPLACE_EXISTING));
 			return HexFormat.of().formatHex(digest.digest());
 		}
+	}
+
+	/*
+	 * The request timeout ends with the response headers, so a body that stalls is cut off by closing it.
+	 * Without this the check would hang for good, and the liveness check shares its thread.
+	 */
+	private static <T> T within(final Duration limit, final InputStream body, final Transfer<T> transfer)
+		throws IOException {
+
+		final CompletableFuture<Void> cutOff = CompletableFuture.runAsync(() -> closeQuietly(body),
+			CompletableFuture.delayedExecutor(limit.toMillis(), TimeUnit.MILLISECONDS));
+
+		try {
+			return transfer.run();
+		} catch (IOException e) {
+			throw cutOff.isDone() ? new IOException("The transfer took longer than " + limit, e) : e;
+		} finally {
+			cutOff.cancel(false);
+		}
+	}
+
+	private static void closeQuietly(final InputStream body) {
+		try {
+			body.close();
+		} catch (IOException e) {
+			// The transfer that was cut off reports the failure
+		}
+	}
+
+	@FunctionalInterface
+	private interface Transfer<T> {
+		T run() throws IOException;
 	}
 
 	private static HttpRequest request(final URI source) {
